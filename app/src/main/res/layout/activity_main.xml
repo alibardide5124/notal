@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="15dp"
+    android:padding="20dp"
     android:background="#88000000"
     tools:context=".MainActivity">
 
@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:contentPadding="10dp"
+        app:contentPaddingBottom="0dp"
         app:cardCornerRadius="5dp"
         app:animationEnabled="false"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -21,14 +22,55 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:textColor="#000"
                 android:textSize="18sp"
                 android:text="@string/app_name" />
+
+            <EditText
+                android:id="@+id/edt_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:hint="@string/edt_hint" />
+
+            <CheckBox
+                android:id="@+id/ckb_pin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/ckb_pin" />
+
+            <com.alibardide5124.cardviewplus.CardViewPlus
+                android:id="@+id/btn_create"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:contentPadding="5dp"
+                app:cardCornerRadius="5dp"
+                app:cardUseCompatPadding="true"
+                app:normalElevation="4dp"
+                app:pressedElevation="8dp">
+
+                <TextView
+                    android:id="@+id/btn_create_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textColor="#000"
+                    android:textSize="15sp"
+                    android:text="@string/btn_main" />
+
+            </com.alibardide5124.cardviewplus.CardViewPlus>
 
         </LinearLayout>
 

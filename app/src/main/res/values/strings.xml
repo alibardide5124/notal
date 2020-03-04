@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">notal</string>
+    <string name="edt_hint">Enter your note here…</string>
+    <string name="ckb_pin">Pin note</string>
+    <string name="btn_main">Create notification</string>
+    <string name="btn_main_edit">Save edit</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="ok">OK</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="channel_name">notal notes</string>
+    <string name="channel_description">The notal\'s created notes</string>
+    <string name="delete_message">Are you sure to delete this notification?!</string>
+    <string name="empty_note_error">Write something…</string>
+    <string name="same_note_error">Change something bro…</string>
 </resources>
