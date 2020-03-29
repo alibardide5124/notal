@@ -25,8 +25,7 @@ class MainActivity : AppCompatActivity() {
             val id: Int? = bundle.getInt("id")
             val edit: Boolean? = bundle.getBoolean("edit")
             edt_note.setText(text)
-            if (edit != null && id != null)
-                if (edit)
+            if (edit != null && id != null && edit)
                     enableEditMode(id, text!!)
             return
         }

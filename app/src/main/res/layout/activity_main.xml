@@ -41,7 +41,9 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
-                android:hint="@string/edt_hint" />
+                android:inputType="text"
+                android:hint="@string/edt_hint"
+                android:importantForAutofill="no" />
 
             <CheckBox
                 android:id="@+id/ckb_pin"
@@ -55,16 +57,17 @@
                 android:id="@+id/btn_create"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:contentPadding="5dp"
                 app:cardCornerRadius="5dp"
                 app:cardUseCompatPadding="true"
                 app:normalElevation="4dp"
-                app:pressedElevation="8dp">
+                app:pressedElevation="8dp"
+                app:cardPreventCornerOverlap="false">
 
                 <TextView
                     android:id="@+id/btn_create_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="5dp"
                     android:gravity="center"
                     android:textColor="#000"
                     android:textSize="15sp"
