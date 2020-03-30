@@ -9,8 +9,8 @@
     <string name="ok">OK</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
-    <string name="channel_name">notal notes</string>
-    <string name="channel_description">The notal\'s created notes</string>
+    <string name="channel_name">notal</string>
+    <string name="channel_description">Notes created by notal</string>
     <string name="delete_message">Are you sure to delete this notification?!</string>
     <string name="empty_note_error">Write something…</string>
     <string name="same_note_error">Change something bro…</string>

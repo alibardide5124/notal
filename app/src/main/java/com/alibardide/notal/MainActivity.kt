@@ -25,9 +25,10 @@ class MainActivity : AppCompatActivity() {
             val id: Int? = bundle.getInt("id")
             val edit: Boolean? = bundle.getBoolean("edit")
             edt_note.setText(text)
-            if (edit != null && id != null && edit)
-                    enableEditMode(id, text!!)
-            return
+            if (edit != null && id != null && edit) {
+                enableEditMode(id, text!!)
+                return
+            }
         }
 
         btn_create_text.setText(R.string.btn_main)
@@ -57,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             .setSmallIcon(android.R.drawable.ic_dialog_info)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-        Toast.makeText(this, "Notification id: $id", Toast.LENGTH_SHORT).show()
+
         createNotificationChannel()
         with (NotificationManagerCompat.from(this)) {
             notify(id, notification.build())
