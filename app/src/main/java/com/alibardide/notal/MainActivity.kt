@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
             .setContentTitle(getString(R.string.app_name))
             .setContentText(edt_note.text.toString())
             .setOngoing(ckb_pin.isChecked)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+            .setSmallIcon(R.mipmap.ic_ticker)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
 
