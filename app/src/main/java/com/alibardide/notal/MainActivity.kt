@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity() {
             .setSmallIcon(R.mipmap.ic_ticker)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+            .setTicker(getString(R.string.app_name)) 
 
         createNotificationChannel()
         with (NotificationManagerCompat.from(this)) {
