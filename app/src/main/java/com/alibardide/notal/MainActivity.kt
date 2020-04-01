@@ -22,11 +22,12 @@ class MainActivity : AppCompatActivity() {
         val bundle = intent.extras
         if (bundle != null) {
             val text = bundle.getString("text")
-            val id: Int? = bundle.getInt("id")
-            val edit: Boolean? = bundle.getBoolean("edit")
+            val id = bundle.getInt("id")
+            val edit = bundle.getBoolean("edit")
+            val pin = bundle.getBoolean("pin")
             edt_note.setText(text)
-            if (edit != null && id != null && edit) {
-                enableEditMode(id, text!!)
+            if (edit) {
+                enableEditMode(id, text!!, pin)
                 return
             }
         }
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("id", id)
             putExtra("text", edt_note.text.toString())
+            putExtra("pin", ckb_pin.isChecked)
         }
         val pendingIntent = PendingIntent.getActivity(applicationContext, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val notification = NotificationCompat.Builder(applicationContext, "0")
@@ -58,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             .setSmallIcon(R.mipmap.ic_ticker)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-            .setTicker(getString(R.string.app_name)) 
+            .setTicker(getString(R.string.app_name))
 
         createNotificationChannel()
         with (NotificationManagerCompat.from(this)) {
@@ -80,8 +82,9 @@ class MainActivity : AppCompatActivity() {
             notificationManager.createNotificationChannel(channel)
         }
     }
-    private fun enableEditMode(id: Int, text: String) {
+    private fun enableEditMode(id: Int, text: String, pin: Boolean) {
         btn_create_text.setText(R.string.btn_main_edit)
+        ckb_pin.isChecked = pin
         btn_create.setOnClickListener {
             when {
                 edt_note.text.toString().trim() == "" -> Toast.makeText(applicationContext, getString(R.string.empty_note_error), Toast.LENGTH_SHORT).show()
