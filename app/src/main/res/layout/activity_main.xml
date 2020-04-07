@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="5dp"
-                android:textColor="#000"
+                android:textColor="#fafafa"
                 android:textSize="18sp"
                 android:text="@string/app_name" />
 
@@ -61,6 +61,8 @@
                 app:cardUseCompatPadding="true"
                 app:normalElevation="4dp"
                 app:pressedElevation="8dp"
+                app:cardBackgroundColor="#424242"
+                app:pressedColor="#757575"
                 app:cardPreventCornerOverlap="false">
 
                 <TextView
@@ -69,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:padding="5dp"
                     android:gravity="center"
-                    android:textColor="#000"
+                    android:textColor="#fafafa"
                     android:textSize="15sp"
                     android:text="@string/btn_main" />
 

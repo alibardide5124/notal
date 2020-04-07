@@ -29,13 +29,8 @@ class MainActivity : AppCompatActivity() {
 
         val bundle = intent.extras
         if (bundle != null) {
-            val id = bundle.getInt(KEY_ID)
-            val text = bundle.getString(KEY_TEXT)
-            val pin = bundle.getBoolean(KEY_PIN)
-            if (text != null) {
-                editMode(id, text, pin)
+            if (editNote(bundle))
                 return
-            }
         }
 
         mainCardCreate.setOnClickListener {
@@ -60,11 +55,21 @@ class MainActivity : AppCompatActivity() {
         val notification = newNotification(pendingIntent)
 
         createNotificationChannel()
-        with (NotificationManagerCompat.from(this)) {
-            notify(id, notification)
-        }
+        NotificationManagerCompat.from(this).notify(id, notification)
         if (currentId == null)
             preferences.edit().putInt("id", id + 1).apply()
+    }
+    private fun newNotification(pendingIntent: PendingIntent): Notification {
+        return NotificationCompat.Builder(applicationContext, "0")
+            .setContentIntent(pendingIntent)
+            .setContentTitle(getString(R.string.app_name))
+            .setContentText(getNote().toString())
+            .setOngoing(isPinned())
+            .setSmallIcon(R.mipmap.ic_ticker)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+            .setTicker(getString(R.string.app_name))
+            .build()
     }
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -74,12 +79,15 @@ class MainActivity : AppCompatActivity() {
             val channel = NotificationChannel("0", name, importance).apply {
                 description = descriptionText
             }
-            val notificationManager: NotificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+            NotificationManagerCompat.from(this).createNotificationChannel(channel)
         }
     }
-    private fun editMode(id: Int, text: String, pin: Boolean) {
+    private fun editNote(bundle: Bundle): Boolean {
+        val id = bundle.getInt(KEY_ID)
+        val text = bundle.getString(KEY_TEXT)
+        val pin = bundle.getBoolean(KEY_PIN)
+        if (text == null)
+            return false
         setPinned(pin)
         setNote(text)
         mainTextViewCreateCardText.setText(R.string.btn_main_edit)
@@ -91,21 +99,10 @@ class MainActivity : AppCompatActivity() {
             else
                 makeNotification(id)
         }
+        return true
     }
     private fun getNote(): Editable = mainEditTextNote.text
     private fun setNote(note: String) { mainEditTextNote.setText(note) }
     private fun isPinned(): Boolean = mainCheckBoxPin.isChecked
     private fun setPinned(pin: Boolean) { mainCheckBoxPin.isChecked = pin }
-    private fun newNotification(pendingIntent: PendingIntent): Notification {
-        return NotificationCompat.Builder(applicationContext, "0")
-            .setContentIntent(pendingIntent)
-            .setContentTitle(getString(R.string.app_name))
-            .setContentText(getNote().toString())
-            .setOngoing(isPinned())
-            .setSmallIcon(R.mipmap.ic_ticker)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-            .setTicker(getString(R.string.app_name))
-            .build()
-    }
 }
