@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
         mainCardCreate.setOnClickListener {
             if (getNote().toString().trim() == "")
-                Toast.makeText(applicationContext, getString(R.string.empty_note_error), Toast.LENGTH_SHORT).show()
+                toast(getString(R.string.empty_note_error))
             else {
                 makeNotification()
                 setNote("")
@@ -93,14 +93,18 @@ class MainActivity : AppCompatActivity() {
         mainTextViewCreateCardText.setText(R.string.btn_main_edit)
         mainCardCreate.setOnClickListener {
             if (getNote().toString().trim() == "")
-                Toast.makeText(applicationContext, getString(R.string.empty_note_error), Toast.LENGTH_SHORT).show()
+                toast(getString(R.string.empty_note_error))
             else if (getNote().toString() == text && isPinned() == pin)
-                Toast.makeText(this, getString(R.string.same_note_error), Toast.LENGTH_SHORT).show()
-            else
+                toast(getString(R.string.same_note_error))
+            else {
                 makeNotification(id)
+                toast(getString(R.string.changes_applied))
+                finish()
+            }
         }
         return true
     }
+    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     private fun getNote(): Editable = mainEditTextNote.text
     private fun setNote(note: String) { mainEditTextNote.setText(note) }
     private fun isPinned(): Boolean = mainCheckBoxPin.isChecked
