@@ -45,13 +45,13 @@ class MainActivity : AppCompatActivity() {
     private fun makeNotification(currentId: Int? = null) {
         val preferences = getSharedPreferences("s", Context.MODE_PRIVATE)
         val id = currentId ?: preferences.getInt(KEY_ID, 0)
-        val intent = Intent(this, NotificationReceiver::class.java).apply {
+        val intent = Intent(this, NotificationActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra(KEY_ID, id)
             putExtra(KEY_TEXT, getNote().toString())
             putExtra(KEY_PIN, isPinned())
         }
-        val pendingIntent = PendingIntent.getBroadcast(applicationContext, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(applicationContext, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val notification = newNotification(pendingIntent)
 
         createNotificationChannel()
