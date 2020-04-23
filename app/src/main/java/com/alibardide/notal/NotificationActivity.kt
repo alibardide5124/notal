@@ -27,6 +27,7 @@ class NotificationActivity : AppCompatActivity() {
         val alertDialog = AlertDialog.Builder(this)
             .setTitle(R.string.app_name)
             .setMessage(text)
+            .setCancelable(false)
             .setPositiveButton(R.string.ok, null)
             .setNegativeButton(R.string.edit) { _: DialogInterface, _: Int ->
                 editNotification()
@@ -39,6 +40,7 @@ class NotificationActivity : AppCompatActivity() {
         val alertDialog = AlertDialog.Builder(this)
             .setTitle(R.string.delete)
             .setMessage(R.string.delete_message)
+            .setCancelable(false)
             .setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
                 NotificationManagerCompat.from(this).cancel(id!!)
             }.setNeutralButton(R.string.no) { _: DialogInterface, _: Int ->

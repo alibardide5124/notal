@@ -18,13 +18,15 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        val KEY_ID = "id"
-        val KEY_TEXT = "text"
-        val KEY_PIN = "pin"
+        const val KEY_ID = "id"
+        const val KEY_TEXT = "text"
+        const val KEY_PIN = "pin"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (getPreferences(Context.MODE_PRIVATE).getBoolean("dark", false))
+            setTheme(R.style.DarkTheme)
         setContentView(R.layout.activity_main)
 
         val bundle = intent.extras
@@ -33,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                 return
         }
 
-        mainCardCreate.setOnClickListener {
+        cardViewCreate.setOnClickListener {
             if (getNote().toString().trim() == "")
                 toast(getString(R.string.empty_note_error))
             else {
@@ -91,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         setPinned(pin)
         setNote(text)
         mainTextViewCreateCardText.setText(R.string.btn_main_edit)
-        mainCardCreate.setOnClickListener {
+        cardViewCreate.setOnClickListener {
             if (getNote().toString().trim() == "")
                 toast(getString(R.string.empty_note_error))
             else if (getNote().toString() == text && isPinned() == pin)
@@ -105,8 +107,9 @@ class MainActivity : AppCompatActivity() {
         return true
     }
     private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    private fun getNote(): Editable = mainEditTextNote.text
-    private fun setNote(note: String) { mainEditTextNote.setText(note) }
-    private fun isPinned(): Boolean = mainCheckBoxPin.isChecked
-    private fun setPinned(pin: Boolean) { mainCheckBoxPin.isChecked = pin }
+    private fun getNote(): Editable = editTextNote.text
+    private fun setNote(note: String) { editTextNote.setText(note) }
+    private fun isPinned(): Boolean = checkBoxPin.isChecked
+    private fun setPinned(pin: Boolean) { checkBoxPin.isChecked = pin }
+
 }
