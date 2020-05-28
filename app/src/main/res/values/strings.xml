@@ -13,6 +13,7 @@
     <string name="channel_description">notal notifications</string>
     <string name="delete_message">Are you sure to delete this notification?!</string>
     <string name="empty_note_error">Write something…</string>
-    <string name="same_note_error">Change something bro…</string>
+    <string name="same_note_error">Change something…</string>
     <string name="changes_applied">Changes applied</string>
+    <string name="change_theme">Change theme</string>
 </resources>
