@@ -55,7 +55,7 @@ class NotificationActivity : AppCompatActivity() {
             .setMessage(R.string.delete_message)
             .setCancelable(false)
             .setPositiveButton(R.string.yes) { _: DialogInterface, _: Int ->
-                NotificationManagerCompat.from(this).cancel(id!!)
+                NotificationManagerCompat.from(this).cancel(id)
                 finish()
             }.setNeutralButton(R.string.no) { _: DialogInterface, _: Int ->
                 notificationDialog()

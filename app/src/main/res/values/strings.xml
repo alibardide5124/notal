@@ -16,4 +16,10 @@
     <string name="same_note_error">Change something…</string>
     <string name="changes_applied">Changes applied</string>
     <string name="change_theme">Change theme</string>
+    <string name="about_me">About me</string>
+    <string name="about_me_message">
+        notal \n
+        Version 1.0.0 \n
+        By Ali Bardide
+    </string>
 </resources>

@@ -37,6 +37,19 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
+                android:id="@+id/imageViewAbout"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginEnd="8dp"
+                android:adjustViewBounds="true"
+                android:background="?attr/selectableItemBackground"
+                app:srcCompat="@drawable/ic_about"
+                app:layout_constraintTop_toTopOf="@+id/textViewAppName"
+                app:layout_constraintBottom_toTopOf="@+id/editTextNote"
+                app:layout_constraintEnd_toStartOf="@+id/imageViewTheme"
+                android:contentDescription="@string/about_me" />
+
+            <ImageView
                 android:id="@+id/imageViewTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"

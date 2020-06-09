@@ -1,9 +1,6 @@
 package com.alibardide.notal
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -32,6 +29,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var preferences: SharedPreferences
     private var isEditing = false
+    private var isDark = false
     private var id: Int? = null
     private var text: String? = null
     private var isPin: Boolean? = null
@@ -39,7 +37,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // Change theme to DarkMode
         preferences = getSharedPreferences(KEY_PREFERENCES, Context.MODE_PRIVATE)
-        val isDark = preferences.getBoolean(KEY_DARK, false)
+        isDark = preferences.getBoolean(KEY_DARK, false)
         if (isDark) setTheme(R.style.DarkTheme)
 
         super.onCreate(savedInstanceState)
@@ -64,18 +62,17 @@ class MainActivity : AppCompatActivity() {
             setPinned(extras.getBoolean(KEY_PIN_SAVE))
         }
 
-        // Change theme and reset activity
+        // Change app theme and reset activity
         imageViewTheme.setOnClickListener {
-            preferences.edit().putBoolean(KEY_DARK, !isDark).apply()
-            val data = Bundle()
-            data.putString(KEY_NOTE_SAVE, getNote().toString())
-            data.putBoolean(KEY_PIN_SAVE, isPinned())
-            val intent = Intent(this, MainActivity::class.java).apply {
-                putExtra(KEY_SAVE_DATA, data)
-            }
-            startActivity(intent)
-            finish()
+            changeTheme()
         }
+
+        // About me dialog
+        imageViewAbout.setOnClickListener {
+            aboutDialog()
+                .show()
+        }
+
         // Add a new note or save edited note
         cardViewCreate.setOnClickListener {
             if (isEditing) {
@@ -148,6 +145,29 @@ class MainActivity : AppCompatActivity() {
             }
             NotificationManagerCompat.from(this).createNotificationChannel(channel)
         }
+    }
+
+    // Change app theme
+    private fun changeTheme() {
+        preferences.edit().putBoolean(KEY_DARK, !isDark).apply()
+        val data = Bundle()
+        data.putString(KEY_NOTE_SAVE, getNote().toString())
+        data.putBoolean(KEY_PIN_SAVE, isPinned())
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra(KEY_SAVE_DATA, data)
+        }
+        startActivity(intent)
+        finish()
+    }
+
+    // About mee dialog
+    private fun aboutDialog() : AlertDialog {
+        return AlertDialog.Builder(this)
+            .setTitle(R.string.about_me)
+            .setMessage(R.string.about_me_message)
+            .setPositiveButton(R.string.ok, null)
+
+            .create()
     }
 
     // Getters and Setters
