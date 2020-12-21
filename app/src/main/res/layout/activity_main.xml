@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp"
-    android:background="@color/darkBackground"
+    android:background="@color/colorPrimaryDark"
     tools:context=".MainActivity">
 
-    <com.alibardide5124.cardviewplus.CardViewPlus
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:animationEnabled="false"
+        app:layout_constraintVertical_weight="1.0"
         app:cardCornerRadius="5dp"
         app:contentPadding="8dp"
-        app:contentPaddingBottom="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -29,9 +29,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="4dp"
                 android:text="@string/app_name"
-                android:textSize="18sp"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="20sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -40,80 +42,66 @@
                 android:id="@+id/imageViewAbout"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="12dp"
+                android:padding="4dp"
                 android:adjustViewBounds="true"
                 android:background="?attr/selectableItemBackground"
-                app:srcCompat="@drawable/ic_about"
-                app:layout_constraintTop_toTopOf="@+id/textViewAppName"
+                android:contentDescription="@string/about_me"
                 app:layout_constraintBottom_toTopOf="@+id/editTextNote"
                 app:layout_constraintEnd_toStartOf="@+id/imageViewTheme"
-                android:contentDescription="@string/about_me" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_about"
+                app:tint="?android:textColorPrimary" />
 
             <ImageView
                 android:id="@+id/imageViewTheme"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_marginEnd="8dp"
+                android:padding="4dp"
                 android:adjustViewBounds="true"
                 android:background="?attr/selectableItemBackground"
-                app:srcCompat="@drawable/ic_theme"
-                app:layout_constraintTop_toTopOf="@+id/textViewAppName"
+                android:contentDescription="@string/change_theme"
                 app:layout_constraintBottom_toTopOf="@+id/editTextNote"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:contentDescription="@string/change_theme" />
+                app:layout_constraintTop_toTopOf="@+id/textViewAppName"
+                app:srcCompat="@drawable/ic_theme"
+                app:tint="?android:textColorPrimary" />
 
             <EditText
                 android:id="@+id/editTextNote"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="4dp"
                 android:hint="@string/edt_hint"
                 android:importantForAutofill="no"
                 android:inputType="text"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewAppName" />
 
-            <CheckBox
-                android:id="@+id/checkBoxPin"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnCreate"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="4dp"
-                android:text="@string/ckb_pin"
+                android:padding="4dp"
+                android:text="@string/btn_main"
+                android:textColor="?android:textColorPrimary"
+                android:textSize="12sp"
+                android:textAllCaps="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/editTextNote" />
 
-            <com.alibardide5124.cardviewplus.CardViewPlus
-                android:id="@+id/cardViewCreate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="5dp"
-                app:cardPressedColor="#AAA"
-                app:cardPreventCornerOverlap="false"
-                app:cardUseCompatPadding="true"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/checkBoxPin"
-                app:normalCardElevation="4dp"
-                app:pressedCardElevation="8dp">
-
-                <TextView
-                    android:id="@+id/mainTextViewCreateCardText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="@string/btn_main"
-                    android:textSize="15sp" />
-
-            </com.alibardide5124.cardviewplus.CardViewPlus>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </com.alibardide5124.cardviewplus.CardViewPlus>
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

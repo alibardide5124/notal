@@ -17,103 +17,56 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val KEY_ID = "id"
-        const val KEY_TEXT = "text"
-        const val KEY_PIN = "isPin"
         const val KEY_DARK = "isDark"
         const val KEY_PREFERENCES = "preferences"
-        const val KEY_SAVE_DATA = "saveData"
-        const val KEY_EDIT_DATA = "editData"
-        const val KEY_NOTE_SAVE = "noteSave"
-        const val KEY_PIN_SAVE  = "pinSave"
+        const val KEY_CHECKPOINT = "checkpoint"
+        const val KEY_EDIT = "edit"
     }
 
     private lateinit var preferences: SharedPreferences
-    private var isEditing = false
-    private var isDark = false
-    private var id: Int? = null
-    private var text: String? = null
-    private var isPin: Boolean? = null
+    private var isDarkMode = false
+    private var note: Note? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // Change theme to DarkMode
         preferences = getSharedPreferences(KEY_PREFERENCES, Context.MODE_PRIVATE)
-        isDark = preferences.getBoolean(KEY_DARK, false)
-        if (isDark) setTheme(R.style.DarkTheme)
+        isDarkMode = preferences.getBoolean(KEY_DARK, false)
+        if (isDarkMode) setTheme(R.style.DarkTheme)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         // Check if is editing note
-        if (intent.hasExtra(KEY_EDIT_DATA)) {
-            val bundle = intent.extras?.getBundle(KEY_EDIT_DATA)
-            id = bundle?.getInt(KEY_ID)
-            text = bundle?.getString(KEY_TEXT)
-            isPin = bundle?.getBoolean(KEY_PIN)
-            isEditing = true
-
-            setNote(text!!)
-            setPinned(isPin!!)
+        if (intent.hasExtra(KEY_EDIT)) {
+            note = intent.getSerializableExtra(KEY_EDIT) as Note
+            setNote(note?.text!!)
             setButtonText(getString(R.string.btn_main_edit))
         }
         // check if has saved data when change theme
-        if (intent.hasExtra(KEY_SAVE_DATA)) {
-            val extras = intent.extras?.getBundle(KEY_SAVE_DATA)!!
-            setNote(extras.getString(KEY_NOTE_SAVE)!!)
-            setPinned(extras.getBoolean(KEY_PIN_SAVE))
-        }
-
+        if (intent.hasExtra(KEY_CHECKPOINT)) setNote(intent.extras?.getString(KEY_CHECKPOINT)!!)
         // Change app theme and reset activity
-        imageViewTheme.setOnClickListener {
-            changeTheme()
-        }
-
+        imageViewTheme.setOnClickListener { changeTheme() }
         // About me dialog
-        imageViewAbout.setOnClickListener {
-            aboutDialog()
-                .show()
-        }
-
+        imageViewAbout.setOnClickListener { aboutDialog().show() }
         // Add a new note or save edited note
-        cardViewCreate.setOnClickListener {
-            if (isEditing) {
-                if (getNote().toString().trim() == "")
-                    toast(getString(R.string.empty_note_error))
-                else if (getNote().toString() == text && isPinned() == isPin)
-                    toast(getString(R.string.same_note_error))
-                else {
-                    makeNotification(id)
-                    toast(getString(R.string.changes_applied))
-                    finish()
-                }
-            } else {
-                if (getNote().toString().trim() == "")
-                    toast(getString(R.string.empty_note_error))
-                else {
-                    makeNotification()
-                    setNote("")
-                }
+        btnCreate.setOnClickListener {
+            when {
+                getNote().toString().trim() == "" -> toast(getString(R.string.empty_note_error))
+                note != null && getNote().toString() == note?.text -> toast(getString(R.string.same_note_error))
+                else -> apply()
             }
         }
-
     }
-
     // Make a notification to show in notification bar
     private fun makeNotification(currentId: Int? = null) {
         val id = currentId ?: preferences.getInt(KEY_ID, 0)
-        // Use bundle to store note data in intent
-        val bundle = Bundle()
-        bundle.putInt(KEY_ID, id)
-        bundle.putString(KEY_TEXT, getNote().toString())
-        bundle.putBoolean(KEY_PIN, isPinned())
         // Start NotificationActivity.kt when touch notification
         val intent = Intent(this, NotificationActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(KEY_EDIT_DATA, bundle)
+            putExtra(KEY_EDIT, Note(id, getNote().toString()))
         }
         val pendingIntent = PendingIntent.getActivity(applicationContext, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         // Make a new notification
         val notification = getNotification(pendingIntent)
-
         // Create notification to use
         createNotificationChannel()
         // notify notification
@@ -126,14 +79,13 @@ class MainActivity : AppCompatActivity() {
             .setContentIntent(pendingIntent)
             .setContentTitle(getString(R.string.app_name))
             .setContentText(getNote().toString())
-            .setOngoing(isPinned())
+            .setOngoing(true)
             .setSmallIcon(R.mipmap.ic_ticker)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
             .setTicker(getString(R.string.app_name))
             .build()
     }
-
     // create a notification channel
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -146,36 +98,37 @@ class MainActivity : AppCompatActivity() {
             NotificationManagerCompat.from(this).createNotificationChannel(channel)
         }
     }
-
     // Change app theme
     private fun changeTheme() {
-        preferences.edit().putBoolean(KEY_DARK, !isDark).apply()
-        val data = Bundle()
-        data.putString(KEY_NOTE_SAVE, getNote().toString())
-        data.putBoolean(KEY_PIN_SAVE, isPinned())
+        preferences.edit().putBoolean(KEY_DARK, !isDarkMode).apply()
         val intent = Intent(this, MainActivity::class.java).apply {
-            putExtra(KEY_SAVE_DATA, data)
+            putExtra(KEY_CHECKPOINT, getNote().toString())
         }
         startActivity(intent)
         finish()
     }
-
     // About mee dialog
     private fun aboutDialog() : AlertDialog {
         return AlertDialog.Builder(this)
             .setTitle(R.string.about_me)
             .setMessage(R.string.about_me_message)
             .setPositiveButton(R.string.ok, null)
-
             .create()
     }
-
     // Getters and Setters
     private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     private fun getNote(): Editable = editTextNote.text
     private fun setNote(note: String) { editTextNote.setText(note) }
-    private fun isPinned(): Boolean = checkBoxPin.isChecked
-    private fun setPinned(pin: Boolean) { checkBoxPin.isChecked = pin }
-    private fun setButtonText(text: String) { mainTextViewCreateCardText.text = text }
+    private fun setButtonText(text: String) { btnCreate.text = text }
+    private fun apply() {
+        makeNotification(note?.id)
+        if (note != null) {
+            toast(getString(R.string.changes_applied))
+            finish()
+        } else {
+            toast(getString(R.string.notification_created))
+            setNote("")
+        }
+    }
 
 }
