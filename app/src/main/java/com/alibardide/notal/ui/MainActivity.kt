@@ -1,4 +1,4 @@
-package com.alibardide.notal
+package com.alibardide.notal.ui
 
 import android.app.*
 import android.content.Context
@@ -11,6 +11,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.alibardide.notal.model.Note
+import com.alibardide.notal.R
+import com.alibardide.notal.database.AppDatabase
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -24,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var preferences: SharedPreferences
+    private lateinit var database: AppDatabase
     private var isDarkMode = false
     private var note: Note? = null
 
@@ -35,6 +39,8 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        // Init database
+        database = AppDatabase(this)
         // Check if is editing note
         if (intent.hasExtra(KEY_EDIT)) {
             note = intent.getSerializableExtra(KEY_EDIT) as Note
@@ -42,7 +48,9 @@ class MainActivity : AppCompatActivity() {
             setButtonText(getString(R.string.btn_main_edit))
         }
         // check if has saved data when change theme
-        if (intent.hasExtra(KEY_CHECKPOINT)) setNote(intent.extras?.getString(KEY_CHECKPOINT)!!)
+        if (intent.hasExtra(KEY_CHECKPOINT)) setNote(intent.extras?.getString(
+            KEY_CHECKPOINT
+        )!!)
         // Change app theme and reset activity
         imageViewTheme.setOnClickListener { changeTheme() }
         // About me dialog
@@ -51,7 +59,9 @@ class MainActivity : AppCompatActivity() {
         btnCreate.setOnClickListener {
             when {
                 getNote().toString().trim() == "" -> toast(getString(R.string.empty_note_error))
-                note != null && getNote().toString() == note?.text -> toast(getString(R.string.same_note_error))
+                note != null && getNote().toString() == note?.text -> toast(getString(
+                    R.string.same_note_error
+                ))
                 else -> apply()
             }
         }
@@ -62,9 +72,17 @@ class MainActivity : AppCompatActivity() {
         // Start NotificationActivity.kt when touch notification
         val intent = Intent(this, NotificationActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(KEY_EDIT, Note(id, getNote().toString()))
+            putExtra(
+                KEY_EDIT,
+                Note(id, getNote().toString())
+            )
         }
-        val pendingIntent = PendingIntent.getActivity(applicationContext, id, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent =
+            PendingIntent.getActivity(
+                applicationContext,
+                id,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT)
         // Make a new notification
         val notification = getNotification(pendingIntent)
         // Create notification to use
@@ -72,6 +90,9 @@ class MainActivity : AppCompatActivity() {
         // notify notification
         NotificationManagerCompat.from(this).notify(id, notification)
         if (currentId == null) preferences.edit().putInt(KEY_ID, id + 1).apply()
+        // Save note to database
+        if (currentId != null) database.update(id.toString(), Note(id, getNote().toString()))
+        else database.save(Note(id, getNote().toString()))
     }
     // add a function to create a notification
     private fun getNotification(pendingIntent: PendingIntent): Notification {

@@ -1,4 +1,4 @@
-package com.alibardide.notal
+package com.alibardide.notal.ui
 
 import android.content.Context
 import android.content.DialogInterface
@@ -11,6 +11,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
+import com.alibardide.notal.model.Note
+import com.alibardide.notal.R
+import com.alibardide.notal.database.AppDatabase
 
 class NotificationActivity : AppCompatActivity() {
 
@@ -45,6 +48,7 @@ class NotificationActivity : AppCompatActivity() {
             button.setOnClickListener {
                 if (delete) {
                     NotificationManagerCompat.from(this).cancel(note.id)
+                    AppDatabase(this).delete(note.id.toString())
                     finish()
                 } else {
                     delete = true

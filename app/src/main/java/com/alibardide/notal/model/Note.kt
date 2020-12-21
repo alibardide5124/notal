@@ -1,4 +1,4 @@
-package com.alibardide.notal
+package com.alibardide.notal.model
 
 import java.io.Serializable
 
