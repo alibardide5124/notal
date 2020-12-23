@@ -4,26 +4,23 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import com.alibardide.notal.model.Note
 import com.alibardide.notal.R
+import com.alibardide.notal.utils.NotificationUtil
 import com.alibardide.notal.database.AppDatabase
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val KEY_ID = "id"
+        const val KEY_EDIT = "edit"
         const val KEY_DARK = "isDark"
         const val KEY_PREFERENCES = "preferences"
         const val KEY_CHECKPOINT = "checkpoint"
-        const val KEY_EDIT = "edit"
     }
 
     private lateinit var preferences: SharedPreferences
@@ -58,73 +55,22 @@ class MainActivity : AppCompatActivity() {
         // Add a new note or save edited note
         btnCreate.setOnClickListener {
             when {
+                // Check if user input empty text
                 getNote().toString().trim() == "" -> toast(getString(R.string.empty_note_error))
+                // Check if user edit note and haven't change anything
                 note != null && getNote().toString() == note?.text -> toast(getString(
                     R.string.same_note_error
                 ))
+                // Create notification if everything is OK
                 else -> apply()
             }
-        }
-    }
-    // Make a notification to show in notification bar
-    private fun makeNotification(currentId: Int? = null) {
-        val id = currentId ?: preferences.getInt(KEY_ID, 0)
-        // Start NotificationActivity.kt when touch notification
-        val intent = Intent(this, NotificationActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(
-                KEY_EDIT,
-                Note(id, getNote().toString())
-            )
-        }
-        val pendingIntent =
-            PendingIntent.getActivity(
-                applicationContext,
-                id,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-        // Make a new notification
-        val notification = getNotification(pendingIntent)
-        // Create notification to use
-        createNotificationChannel()
-        // notify notification
-        NotificationManagerCompat.from(this).notify(id, notification)
-        if (currentId == null) preferences.edit().putInt(KEY_ID, id + 1).apply()
-        // Save note to database
-        if (currentId != null) database.update(id.toString(), Note(id, getNote().toString()))
-        else database.save(Note(id, getNote().toString()))
-    }
-    // add a function to create a notification
-    private fun getNotification(pendingIntent: PendingIntent): Notification {
-        return NotificationCompat.Builder(applicationContext, "0")
-            .setContentIntent(pendingIntent)
-            .setContentTitle(getString(R.string.app_name))
-            .setContentText(getNote().toString())
-            .setOngoing(true)
-            .setSmallIcon(R.mipmap.ic_ticker)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-            .setTicker(getString(R.string.app_name))
-            .build()
-    }
-    // create a notification channel
-    private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = getString(R.string.channel_name)
-            val descriptionText = getString(R.string.channel_description)
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("0", name, importance).apply {
-                description = descriptionText
-            }
-            NotificationManagerCompat.from(this).createNotificationChannel(channel)
         }
     }
     // Change app theme
     private fun changeTheme() {
         preferences.edit().putBoolean(KEY_DARK, !isDarkMode).apply()
-        val intent = Intent(this, MainActivity::class.java).apply {
-            putExtra(KEY_CHECKPOINT, getNote().toString())
-        }
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra(KEY_CHECKPOINT, getNote().toString())
         startActivity(intent)
         finish()
     }
@@ -141,13 +87,19 @@ class MainActivity : AppCompatActivity() {
     private fun getNote(): Editable = editTextNote.text
     private fun setNote(note: String) { editTextNote.setText(note) }
     private fun setButtonText(text: String) { btnCreate.text = text }
+    // Apply notification change or create a new one
     private fun apply() {
-        makeNotification(note?.id)
+        // Create notification or update
+        val id = NotificationUtil(this).createNotification(note?.id, getNote().toString())
         if (note != null) {
+            // Apply changes and quit app
             toast(getString(R.string.changes_applied))
+            database.update(id.toString(), Note(id, getNote().toString()))
             finish()
         } else {
+            // Apply changes and delete text
             toast(getString(R.string.notification_created))
+            database.save(Note(id ,getNote().toString()))
             setNote("")
         }
     }

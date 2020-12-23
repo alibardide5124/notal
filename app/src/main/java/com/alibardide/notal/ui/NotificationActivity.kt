@@ -32,25 +32,34 @@ class NotificationActivity : AppCompatActivity() {
         // Show the dialog
         notificationDialog()
     }
+    // Create a dialog to show notification text
     private fun notificationDialog() {
         val alertDialog = AlertDialog.Builder(this)
             .setTitle(R.string.app_name)
             .setMessage(note.text)
             .setCancelable(false)
+            // Quit app
             .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int -> finish() }
+            // Edit notification
             .setNegativeButton(R.string.edit) { _: DialogInterface, _: Int -> editNotification() }
+            // Delete notification
             .setNeutralButton(R.string.delete, null)
         val dialog = alertDialog.create()
+        // Apply changes in delete button
         dialog.setOnShowListener {
+            // Change button color
             val button = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+            // Double tap to delete
             var delete = false
             button.setTextColor(Color.parseColor("#f44336"))
             button.setOnClickListener {
                 if (delete) {
+                    // Delete notification
                     NotificationManagerCompat.from(this).cancel(note.id)
                     AppDatabase(this).delete(note.id.toString())
                     finish()
                 } else {
+                    // Show 'Tap again to delete' message
                     delete = true
                     object: CountDownTimer(3000, 1000) {
                         override fun onFinish() { delete = false }
@@ -64,7 +73,7 @@ class NotificationActivity : AppCompatActivity() {
     }
     // Return to MainActivity.kt and edit current notification
     private fun editNotification() {
-        // send data using intent
+        // send note data using intent
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra(MainActivity.KEY_EDIT, note)
