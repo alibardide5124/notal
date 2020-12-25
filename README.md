@@ -13,20 +13,12 @@ Usage
 -----
 
 This app able you to create notes that appears in your phone's notification bar. <br/>
-Also you can pin your notes. So you'll not able to delete notification by swipe it. <br/>
-You can edit or delete your notes by choose the notification in notification bar.
+If you turn off your phone, they still remain on the notification bar. <br/>
+You can edit or delete your note by choosing it on the notification bar.
 <br/>
 <br/>
-
-Support
------
-
-Support app by joining [**stargazers**](https://https://github.com/alibardide5124/notal/stargazers) for this repository
-<br/>
-And [**follow me**](https://https://https://github.com/alibardide5124?tab=followers) for my next creations
 
 License
 -----
 
 notal by [Ali Bardide](https://github.com/alibardide5124) is licensed under a [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
-
