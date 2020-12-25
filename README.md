@@ -1,11 +1,11 @@
 notal
 =================
 
-<img src="/readme.files/sample-shot.png" alt="sample" title="sample" width="240" height="427" align="right" vspace="52" />
+<img src="/release-apk/sample-shot.png" alt="sample" title="sample" width="240" height="427" align="right" vspace="52" />
 
 Simple Android app to create notes in notification
 
-Download signed apk from [**here**](https://github.com/alibardide5124/notal/blob/master/readme.files/app-release.apk)
+Download signed apk from [**here**](https://github.com/alibardide5124/notal/blob/master/release-apk/app-release.apk)
 <br/>
 <br/>
 
