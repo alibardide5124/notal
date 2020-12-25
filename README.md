@@ -21,7 +21,7 @@ You can edit or delete your notes by choose the notification in notification bar
 Support
 -----
 
-Find this library useful? Support it by joining [**stargazers**](https://https://github.com/alibardide5124/notal/stargazers) for this repository
+Support app by joining [**stargazers**](https://https://github.com/alibardide5124/notal/stargazers) for this repository
 <br/>
 And [**follow me**](https://https://https://github.com/alibardide5124?tab=followers) for my next creations
 
