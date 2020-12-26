@@ -1,19 +1,14 @@
 notal
 =================
 
-<img src="/release-apk/sample-shot.png" alt="sample" title="sample" width="240" height="427" align="right" vspace="52" />
-
 Simple Android app to create notes in notification
 
-Download signed apk from [**here**](https://github.com/alibardide5124/notal/blob/master/release-apk/app-release.apk)
+Download signed apk from [**here**](https://github.com/alibardide5124/notal/releases/tag/v1.0.2)
 <br/>
 <br/>
 
-Usage
------
 
-This app able you to create notes that appears in your phone's notification bar. <br/>
-If you turn off your phone, they still remain on the notification bar. <br/>
+You can create note with this app that appears in your android notification bar. <br/>
 You can edit or delete your note by choosing it on the notification bar.
 <br/>
 <br/>

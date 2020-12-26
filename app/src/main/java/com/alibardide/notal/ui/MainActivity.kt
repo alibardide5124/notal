@@ -2,8 +2,10 @@ package com.alibardide.notal.ui
 
 import android.app.*
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.widget.Toast
@@ -76,10 +78,18 @@ class MainActivity : AppCompatActivity() {
     }
     // About mee dialog
     private fun aboutDialog() : AlertDialog {
+        val info = packageManager.getPackageInfo(packageName, 0)
         return AlertDialog.Builder(this)
-            .setTitle(R.string.about_me)
-            .setMessage(R.string.about_me_message)
+            .setMessage(String.format(getString(R.string.about_me_message), info.versionName))
             .setPositiveButton(R.string.ok, null)
+            // Open app GitHub page
+            .setNeutralButton(R.string.github) { _: DialogInterface, _: Int ->
+                val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://github.com/alibardide5124/notal.git")
+                    )
+                startActivity(intent)
+            }
             .create()
     }
     // Getters and Setters
