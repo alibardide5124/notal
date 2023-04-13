@@ -9,16 +9,18 @@
     <string name="ok">OK</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
     <string name="github">GitHub</string>
     <string name="channel_name">notal</string>
     <string name="channel_description">notal notifications</string>
-    <string name="delete_message">Are you sure to delete this notification?!</string>
-    <string name="empty_note_error">Write something…</string>
-    <string name="same_note_error">Change something…</string>
+    <string name="delete_message">Are you sure you want to delete this notification?</string>
+    <string name="empty_note_error">You haven\'t wrote anything yet</string>
+    <string name="same_note_error">You haven\'t changed your note</string>
     <string name="changes_applied">Changes applied</string>
     <string name="notification_created">Notification created</string>
     <string name="change_theme">Change theme</string>
     <string name="about_me">About me</string>
-    <string name="about_me_message">notal %s \nBy Ali Bardide \n\nLicensed on Apache 2.0
-    </string>
+    <string name="about_me_message">notal %s \nBy Ali Bardide \n\nLicensed on Apache 2.0</string>
+    <string name="permission_ration_title">Request permission</string>
+    <string name="permission_ration_message">Notal needs permission request to show the notification. Without this permission Notal cannot work</string>
 </resources>
