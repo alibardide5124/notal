@@ -2,7 +2,6 @@ package com.alibardide.notal.ui
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.*
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -24,6 +23,7 @@ import com.alibardide.notal.data.NoteDao
 import com.alibardide.notal.databinding.ActivityMainBinding
 import com.alibardide.notal.Constants
 import com.alibardide.notal.utils.NotificationUtil
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +54,7 @@ class MainActivity: AppCompatActivity() {
         if (Constants.isAtLeastTiramisu() && !Constants.hasNotificationPermission(this))
             requestNotificationPermission()
 
-        binding.imageViewAbout.setOnClickListener { displayAboutDialog().show() }
+        binding.imageViewAbout.setOnClickListener { displayAboutDialog() }
         binding.btnCreate.setOnClickListener {
             when {
                 binding.editTextNote.text.toString().isBlank() ->
@@ -74,9 +74,10 @@ class MainActivity: AppCompatActivity() {
         }
     }
 
-    private fun displayAboutDialog(): AlertDialog {
-        return AlertDialog.Builder(this)
-            .setMessage(String.format(getString(R.string.about_me_message), BuildConfig.VERSION_NAME))
+    private fun displayAboutDialog() {
+        return MaterialAlertDialogBuilder(this)
+            .setTitle(String.format(getString(R.string.about_me_title), BuildConfig.VERSION_NAME))
+            .setMessage(getString(R.string.about_me_message))
             .setPositiveButton(R.string.ok, null)
             .setNeutralButton(R.string.github) { _: DialogInterface, _: Int ->
                 val githubUrl = "https://github.com/alibardide5124/notal.git"
@@ -84,6 +85,7 @@ class MainActivity: AppCompatActivity() {
                 startActivity(intent)
             }
             .create()
+            .show()
     }
 
 
@@ -141,7 +143,7 @@ class MainActivity: AppCompatActivity() {
                 this, Manifest.permission.POST_NOTIFICATIONS
             )
             -> {
-                AlertDialog.Builder(this)
+                MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.permission_ration_title)
                     .setMessage(R.string.permission_ration_message)
                     .setPositiveButton(R.string.cancel, null)

@@ -1,6 +1,5 @@
 package com.alibardide.notal.ui
 
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
@@ -13,6 +12,7 @@ import com.alibardide.notal.R
 import com.alibardide.notal.data.Note
 import com.alibardide.notal.data.NoteDao
 import com.alibardide.notal.Constants
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,8 +55,8 @@ class NotificationActivity : AppCompatActivity() {
     }
 
     private fun displayNotificationDialog() {
-        val dialog =
-            AlertDialog.Builder(this).setTitle(R.string.app_name).setMessage(note.text.trim())
+        val dialog = MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.app_name).setMessage(note.text.trim())
                 .setCancelable(false)
                 .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
                     finish()
@@ -73,9 +73,9 @@ class NotificationActivity : AppCompatActivity() {
             deleteButton.setTextColor(Color.parseColor("#f44336"))
             deleteButton.setOnClickListener {
                 if (canDelete) {
+                    NotificationManagerCompat.from(this).cancel(note.id)
                     CoroutineScope(Dispatchers.IO).launch {
                         noteDao.deleteNote(note)
-                        NotificationManagerCompat.from(coroutineContext as Context).cancel(note.id)
                     }.invokeOnCompletion {
                         finish()
                     }
