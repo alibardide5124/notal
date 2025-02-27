@@ -20,9 +20,13 @@
     <string name="changes_applied">Changes applied</string>
     <string name="notification_created">Notification created</string>
     <string name="change_theme">Change theme</string>
+    <string name="history">History</string>
     <string name="about_me">About me</string>
     <string name="about_me_title">notal %s</string>
     <string name="about_me_message">By Ali Bardide \n\nLicensed on Apache 2.0</string>
     <string name="permission_ration_title">Request permission</string>
     <string name="permission_ration_message">Notal needs permission request to show the notification. Without this permission Notal cannot work</string>
+    <string name="give_notification_permission">Give Notification Permission</string>
+    <string name="notification_permission_denied">Notification Permission Denied</string>
+    <string name="notal_needs_notification_permission">notal needs notification permission</string>
 </resources>

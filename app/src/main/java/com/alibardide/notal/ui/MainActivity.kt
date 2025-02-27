@@ -9,6 +9,8 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -31,14 +33,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity: AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var prefs: SharedPreferences
+
     @Inject
     lateinit var noteDao: NoteDao
     private lateinit var binding: ActivityMainBinding
     private var note: Note? = null
+    private var notes: List<Note> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +55,26 @@ class MainActivity: AppCompatActivity() {
         updateNoteFromIntent()
         NotificationUtil(this).createNotificationChannel()
 
-        if (Constants.isAtLeastTiramisu() && !Constants.hasNotificationPermission(this))
+        if (Constants.isAtLeastTiramisu())
             requestNotificationPermission()
 
+        binding.notifPermission.setOnClickListener {
+            openAppSettings()
+        }
         binding.imageViewAbout.setOnClickListener { displayAboutDialog() }
+        binding.layoutHistory.setOnClickListener {
+
+        }
         binding.btnCreate.setOnClickListener {
             when {
+                Constants.isAtLeastTiramisu() && !Constants.hasNotificationPermission(this) -> {
+                    Toast.makeText(
+                        context,
+                        getString(R.string.notification_permission_denied),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+
                 binding.editTextNote.text.toString().isBlank() ->
                     Toast.makeText(
                         context,
@@ -65,13 +83,25 @@ class MainActivity: AppCompatActivity() {
                     ).show()
 
                 note != null && binding.editTextNote.text.toString() == note?.text ->
-                    Toast.makeText(context, getString(R.string.same_note_error), Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(
+                        context,
+                        getString(R.string.same_note_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
 
                 else ->
                     CoroutineScope(Dispatchers.IO).launch { notify(context) }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Constants.isAtLeastTiramisu())
+            when (Constants.hasNotificationPermission(this)) {
+                true -> enableCreateButton()
+                false -> disableCreateButton()
+            }
     }
 
     private fun displayAboutDialog() {
@@ -109,7 +139,7 @@ class MainActivity: AppCompatActivity() {
             }
         }
 
-        prefs.edit().putInt(Constants.KEY_ID, id+1).apply()
+        prefs.edit().putInt(Constants.KEY_ID, id + 1).apply()
         CoroutineScope(Dispatchers.Main).launch {
             Toast.makeText(
                 context,
@@ -142,23 +172,44 @@ class MainActivity: AppCompatActivity() {
             ActivityCompat.shouldShowRequestPermissionRationale(
                 this, Manifest.permission.POST_NOTIFICATIONS
             )
-            -> {
+                -> {
                 MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.permission_ration_title)
                     .setMessage(R.string.permission_ration_message)
-                    .setPositiveButton(R.string.cancel, null)
-                    .setNegativeButton(R.string.ok) { _: DialogInterface, _: Int ->
-                        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-                            if (isGranted.not()) finish()
-                        }.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    .setNegativeButton(R.string.cancel) { _: DialogInterface, _: Int ->
+                        disableCreateButton()
+                    }
+                    .setPositiveButton(R.string.ok) { _: DialogInterface, _: Int ->
+                        openAppSettings()
                     }
                     .create()
+                    .show()
             }
+
             else ->
                 registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-                    if (isGranted.not()) finish()
+                    if (isGranted.not()) disableCreateButton()
                 }.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
+    }
+
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.setData(uri)
+        startActivity(intent)
+    }
+
+    private fun disableCreateButton() {
+        binding.btnCreate.isEnabled = false
+        binding.btnCreate.text = getString(R.string.notal_needs_notification_permission)
+        binding.notifPermission.visibility = View.VISIBLE
+    }
+
+    private fun enableCreateButton() {
+        binding.btnCreate.isEnabled = true
+        binding.btnCreate.text = getString(R.string.btn_main)
+        binding.notifPermission.visibility = View.GONE
     }
 
 }
