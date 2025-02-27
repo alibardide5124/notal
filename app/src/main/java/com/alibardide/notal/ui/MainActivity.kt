@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayAboutDialog() {
-        return MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(String.format(getString(R.string.about_me_title), BuildConfig.VERSION_NAME))
             .setMessage(getString(R.string.about_me_message))
             .setPositiveButton(R.string.ok, null)
