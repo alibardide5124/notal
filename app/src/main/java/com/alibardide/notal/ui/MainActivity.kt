@@ -11,11 +11,44 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import com.alibardide.notal.BuildConfig
@@ -24,6 +57,7 @@ import com.alibardide.notal.data.Note
 import com.alibardide.notal.data.NoteDao
 import com.alibardide.notal.databinding.ActivityMainBinding
 import com.alibardide.notal.Constants
+import com.alibardide.notal.ui.theme.NotalTheme
 import com.alibardide.notal.utils.NotificationUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,8 +75,10 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var noteDao: NoteDao
     private lateinit var binding: ActivityMainBinding
+    private lateinit var composeView: ComposeView
+
     private var note: Note? = null
-    private var notes: List<Note> = emptyList()
+    private var notes: SnapshotStateList<Note> = mutableStateListOf<Note>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +86,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val context = this@MainActivity
+
+        composeView = ComposeView(this).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnLifecycleDestroyed(this@MainActivity))
+            setContent {
+                NotalTheme {
+                    NoteList()
+                }
+            }
+        }
+        binding.hiddenContainer.addView(composeView)
 
         // Check if note sent from intent
         updateNoteFromIntent()
@@ -61,9 +107,11 @@ class MainActivity : AppCompatActivity() {
         binding.notifPermission.setOnClickListener {
             openAppSettings()
         }
-        binding.imageViewAbout.setOnClickListener { displayAboutDialog() }
+        binding.imageViewAbout.setOnClickListener {
+            displayAboutDialog()
+        }
         binding.layoutHistory.setOnClickListener {
-
+            displayHistoryDialog()
         }
         binding.btnCreate.setOnClickListener {
             when {
@@ -90,7 +138,13 @@ class MainActivity : AppCompatActivity() {
                     ).show()
 
                 else ->
-                    CoroutineScope(Dispatchers.IO).launch { notify(context) }
+                    CoroutineScope(Dispatchers.IO).launch {
+                        notify(
+                            context,
+                            id = note?.id ?: prefs.getInt(Constants.KEY_ID, 0),
+                            text = binding.editTextNote.text.toString()
+                        )
+                    }
             }
         }
     }
@@ -118,15 +172,111 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun displayHistoryDialog() {
+        (composeView.parent as? ViewGroup)?.removeView(composeView)
+        CoroutineScope(Dispatchers.IO).launch {
+            notes = noteDao.getAllNotes().toMutableStateList()
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.history))
+            .setView(composeView)
+            .setPositiveButton("Dismiss", null)
+            .create()
+            .show()
+    }
+
+    @Composable
+    private fun NoteList() {
+        val coroutineScope = rememberCoroutineScope()
+        val notesR by rememberUpdatedState(notes)
+        var selectedId by remember { mutableIntStateOf(-1) }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                item {
+                    if (notes.isEmpty()) {
+                        Text(
+                            text = "No notes found",
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.animateItem()
+                        )
+                    }
+                }
+                items(notesR, key = { it.id }) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(8.dp))
+                            .animateItem()
+                            .clickable {
+                                selectedId = when {
+                                    selectedId != it.id -> it.id
+                                    else -> -1
+                                }
+                            }
+                            .padding(vertical = 12.dp, horizontal = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = it.text,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 16.sp,
+                            modifier = Modifier.weight(1f)
+                        )
+                        AnimatedVisibility(selectedId == it.id) {
+                            Row {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_publish),
+                                    contentDescription = "Publish",
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.clickable {
+                                        coroutineScope.launch {
+                                            notify(
+                                                this@MainActivity,
+                                                id = it.id,
+                                                text = it.text
+                                            )
+                                        }
+                                    }
+                                )
+                                Spacer(Modifier.width(8.dp))
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_delete),
+                                    contentDescription = "Delete",
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.clickable {
+                                        coroutineScope.launch {
+                                            noteDao.deleteNote(it)
+                                            notes.remove(it)
+                                            NotificationManagerCompat
+                                                .from(this@MainActivity)
+                                                .cancel(it.id)
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     @SuppressLint("MissingPermission")
-    private suspend fun notify(context: Context) {
-        val id = note?.id ?: prefs.getInt(Constants.KEY_ID, 0)
-        val notification = NotificationUtil(this)
-            .provideNotification(id, binding.editTextNote.text.toString())
+    private suspend fun notify(context: Context, id: Int, text: String) {
+        val notification = NotificationUtil(this).provideNotification(id, text)
 
         NotificationManagerCompat.from(context).notify(id, notification)
-        noteDao.upsertNote(Note(id, binding.editTextNote.text.toString()))
+        noteDao.upsertNote(Note(id, text))
 
         if (note != null) {
             CoroutineScope(Dispatchers.Main).launch {
