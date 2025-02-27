@@ -12,6 +12,7 @@
     <string name="cancel">Cancel</string>
     <string name="github">GitHub</string>
     <string name="channel_name">notal</string>
+    <string name="channel_id">0</string>
     <string name="channel_description">notal notifications</string>
     <string name="delete_message">Are you sure you want to delete this notification?</string>
     <string name="empty_note_error">You haven\'t wrote anything yet</string>

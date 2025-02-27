@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -18,7 +17,6 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import com.alibardide.notal.BuildConfig
 import com.alibardide.notal.R
 import com.alibardide.notal.data.Note
@@ -53,7 +51,7 @@ class MainActivity: AppCompatActivity() {
         updateNoteFromIntent()
         NotificationUtil(this).createNotificationChannel()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && hasNotificationPermission().not())
+        if (Constants.isAtLeastTiramisu() && !Constants.hasNotificationPermission(this))
             requestNotificationPermission()
 
         binding.imageViewAbout.setOnClickListener { displayAboutDialog().show() }
@@ -65,9 +63,11 @@ class MainActivity: AppCompatActivity() {
                         getString(R.string.empty_note_error),
                         Toast.LENGTH_SHORT
                     ).show()
+
                 note != null && binding.editTextNote.text.toString() == note?.text ->
                     Toast.makeText(context, getString(R.string.same_note_error), Toast.LENGTH_SHORT)
                         .show()
+
                 else ->
                     CoroutineScope(Dispatchers.IO).launch { notify(context) }
             }
@@ -85,6 +85,7 @@ class MainActivity: AppCompatActivity() {
             }
             .create()
     }
+
 
     @SuppressLint("MissingPermission")
     private suspend fun notify(context: Context) {
@@ -157,11 +158,5 @@ class MainActivity: AppCompatActivity() {
                 }.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun hasNotificationPermission() =
-        ContextCompat.checkSelfPermission(
-            this, Manifest.permission.POST_NOTIFICATIONS
-        ) == PackageManager.PERMISSION_GRANTED
 
 }
