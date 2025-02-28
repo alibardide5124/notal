@@ -1,17 +1,23 @@
-notal
-=================
+![](/readme.files/nota-banner.png)
 
-Simple Android app to create notes in notification
+# notal
 
-Download signed apk from [**here**](https://github.com/alibardide5124/notal/releases/tag/v1.0.2)
-<br/>
-<br/>
+Android notes and reminders in your notification
 
+It let's you create notes that sticks in your notification to make you remember that thing. </br>
+You can download a signed apk from [**latest release**](https://github.com/alibardide5124/notal/releases/latest)
+</br></br>
 
-You can create note with this app that appears in your android notification bar. <br/>
-You can edit or delete your note by choosing it on the notification bar.
+Hope you enjoy it :)
+
+</br></br>
+
+Support
+-----
+
+If you like this application, just support it by joining [**stargazers**](https://https://github.com/alibardide5124/notal/stargazers) for this repository
 <br/>
-<br/>
+And [**follow me**](https://https://https://github.com/alibardide5124?tab=followers) for my next creations
 
 License
 -----
